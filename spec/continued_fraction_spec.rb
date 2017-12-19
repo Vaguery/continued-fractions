@@ -1,4 +1,5 @@
 
+
 describe 'ContinuedFraction' do
   it 'is initialized with an array of numbers' do
     expect(ContinuedFraction.new(1,2,3).constants).to eq [1,2,3]
@@ -56,8 +57,43 @@ describe 'calculating' do
   it 'works for long lists of numbers' do
     expect(ContinuedFraction.new(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1).calculate).to be_within(0.001).of((1+Math.sqrt(5))/2) # phi
   end
+
+  it "doesn't freak out when it hits a bad value" do
+    expect{ ContinuedFraction.new(0,0,0,0,0,1).calculate }.not_to raise_error
+  end
+
+  def randconst
+    Random.rand(20)+1
+  end
+
+  # it "handles arbitrary numbers (because I wanted to see it)" do
+  #   expect{
+  #     File.open("values.csv", 'w') do |file|
+  #       v = (0..1000).collect do
+  #         cf = ContinuedFraction.new(*(0..50).collect {|i| randconst()})
+  #         file.puts("#{cf.calculate},#{cf.constants.join(',')}")
+  #         cf
+  #       end
+  #     end
+  #   }.not_to raise_error
+  # end
+
+  it 'actually coverges' do
+    c = ContinuedFraction.new(*(0..50).collect {|i| randconst()}).convergence
+    if (c[-1].nan?) then
+      expect(c[-2].nan?).to be true # if it in fact doesn't stabilize it flies away, "converging" to NaN
+    else
+      expect(c[-1]).to eq c[-2]
+    end
+  end
+
 end
 
+describe 'convergence' do
+  it 'produces a series of b_zero plus` every value for each known pair' do
+    expect(ContinuedFraction.new(1,1,1,1,1,1,1,1,1,1).convergence).to eq [1.0, 2.0, 2.0, 1.5, 1.5, 1.6666666666666665, 1.6666666666666665, 1.6, 1.6, 1.625, 1.625]
+  end
+end
 
 
 
@@ -86,4 +122,7 @@ class ContinuedFraction
     return result
   end
 
+  def convergence
+    (0..@constants.length).collect {|a| ContinuedFraction.new(*@constants[0..a]).calculate}
+  end
 end
