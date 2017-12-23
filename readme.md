@@ -12,6 +12,8 @@ Thus, `ContinuedFraction.new(1,2,3)` represents the value `(1 + 2/3)` (`b_0` and
 
 The library includes a `#calculate` method that returns the final value for the entire set of constants, and also a `#convergence` method that returns all intermediate results for every subset of constants `[b_0,a_1...c_i]` for all `i`.
 
+There is also an `#exactly` method, which assumes the constants are integers, and calculates the value of a finite continued fraction as a rational number.
+
 ## So?
 
 Next step is to include a simple metaheuristic search that will return a "good enough" approximation of the constants for any given target constant. "Good enough" subject to exploration, which is the point....
